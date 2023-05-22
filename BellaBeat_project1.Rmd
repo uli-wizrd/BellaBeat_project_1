@@ -1,0 +1,292 @@
+---
+title: "Capstone project"
+author: "Ulises Rangel Rivera"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data analysis and Bellabeat
+
+In the following R Markdown document I'll present my process for obtaining insights that can help the company Bellabeat make data driven decisions, for one of their products marketing strategy keeping the stakeholders interest and the business task in mind.
+
+I believe that through analyzing the data that was provided we at the marketing analytics team can help our company achieve it's goal of providing it's customers with a unique experience, this as a consequence can open the doors for new opportunities and products that our target audience can enjoy.
+
+So without any further ado I shall begin my exposition.
+
+## 1.- Ask
+
+In order to asses and produce recommendations we must first know what we are trying to achieve and a way to do this is by stating the problem to solve, and making questions that can lead us to insights that can potentially achieve our goal.
+
+First we defined our business task as follows: "Identify trends in smart device usage that are applicable to our users and use them to guide the marketing strategy of one of our products".
+
+Now following the SMART method which stands for Specific, Measurable, Action oriented, Relevant and Time-bound, these are some important questions we can ask about our data that can help us complete the business task succesfully:
+
+1.  What kind of workout intensity do smart device users perform the most?
+2.  For how many days on average did these users wear the product?
+3.  At what time of the day do these users prefer to workout?
+4.  Do these users prefer to log their activity manually or automatically?
+5.  How many steps on average do users that wear the product often take per day?
+
+## 2.- Prepare
+
+Before we analyze our data we must describe it's characteristics to clear potential doubts that may arise through this analysis.
+
+Our data is open source and public, it was downloaded from the following link [FitBit Fitness Tracker Data on Kaggle](https://www.kaggle.com/datasets/arashnic/fitbit), and I must thank the user who kindly provided us with this database, without his contribution this project would not be possible.
+
+The tables used in this analysis were in a narrow format, and the credibility of this dataset was determined based on the ROCCC method which stands for:
+
+1.  Reliable
+2.  Original
+3.  Comprehensive
+4.  Current
+5.  Cited
+
+Taking the previous points into account, we can say that our data isn't very reliable as it comes from a third party so we don't know how they got these values or even in what units some of them are, there wasn't any metadata that described the data set.
+Our data isn't original as it comes from a third party.
+Our data is somewhat comprehensive as it does provide values for relevant variables that could give us insights to understand the behavior of our company's potential costumers.
+Our data isn't current, it is from 7 years ago so the results should not be used to make definite statements about the current users trends and our data does not seem to be cited.
+
+The integrity of the data was verified during the cleaning of it and also during its analysis.
+This was done through viewing summaries of the data that would show us the value ranges for different variables, the type of data we had, the unique values and their consistency across different tables to mention some of the concepts related to ensuring data integrity contemplated in the analysis.
+
+The data used helps us answer our questions as it does provide the information we need, but it is required to analyze the most recent data on these users of fitness smart devices in order to make a better decision.
+
+The main problems with the data are that it is outdated, from a third party and that we have a very small amount of users data, that cannot be representative of the total population of users that we are interested in.
+
+Surely some of these complications can be overcome with a current data set like the lack of user data, this can be addressed through random sampling and a thorough statistical analysis which did not take place during this project.
+
+## Process
+
+The data to create the visualizations was cleaned through SQL queries and this process for most tables was logged in a file where the SQL for each query was registered.
+Another tool used to clean and create the tables were functions from R packages.
+
+Since every step of the cleaning process was registered our results can be reproduced and reviewed by anyone familiar with the programming languages used in this project.
+The most common operations of data cleaning performed were the following:
+
+1.  Erasing white spaces.
+2.  Renaming columns and tables.
+3.  Separating data strings into different columns.
+4.  Changing the data type of certain variables according to the analysis and visualization being created.
+5.  Selecting certain columns from our data to create new tables.
+6.  Creating new tables with averages and rounding the results.
+
+## Analysis
+
+In order to complete our business task and answer the questions we posed during the Ask phase of the project we looked only a some of the tables to save time.
+This would allow us to focus only on the relevant information to provide good visualizations and this would also let us concentrate on the cleaning of the data.
+
+In the first part of this section we will provide some interactive resources to get a feel for the kind of work that was performed with the data, the rest of the file will just contain our visualizations.
+
+We started with the daily average data table which is a summary of the daily activity table in the original data set.
+
+Before we describe the steps we took we must mention the libraries that were used during the analysis and data cleaning process, which were the following:
+
+```{r eval=TRUE, echo=TRUE}
+library('tidyverse')
+library('ggplot2')
+library('dplyr')
+library('RColorBrewer')
+library('ggExtra')
+library('ggpubr')
+library('skimr')
+```
+
+First we looked at a birds eye view of the table with the following piece of code:
+
+```{r eval = TRUE, echo=TRUE}
+data_path1 <- file.choose()
+
+dad_table <- read.csv(data_path1, header = T, sep = ",", dec = ".")
+
+summary(dad_table)
+```
+
+This step was repeated with all of our tables, doing this allowed us to look at the ranges of our data letting us prepare a data cleaning strategy to analyze the data and visualize relationships between variables of interest.
+
+Once we saw a complete data table we took from it only the columns that we were interested in, and we created a table with that information, to do this we ran the following piece of code:
+
+```{r eval=TRUE, echo=TRUE}
+
+trim_dad_table <- dad_table %>%
+  select(day_count,avg_sm,avg_vam,avg_fam,avg_lam) %>%
+  rename(average_sedentary_minutes = avg_sm,
+         average_very_active_minutes = avg_vam,
+         average_lighltly_active_minutes = avg_lam,
+         average_fairly_active_minutes = avg_fam)
+```
+
+Now from this new table we can also get a summary of our data through the next lines of code, these types of summary help us clean our data and validate it:
+
+```{r eval= TRUE, echo=TRUE}
+
+head(trim_dad_table) # First six records
+tail(trim_dad_table) # Last six records
+skim_without_charts(trim_dad_table) # A more detailed summary
+
+```
+
+We created another two simple tables from the previous one to make our first visualization:
+
+```{r eval= TRUE, echo=TRUE}
+# We'll summarize our data a little more for our visualizations 
+
+condensed_dad_table <- trim_dad_table %>%
+  group_by(day_count) %>%
+  summarise(mean_sedentary_minutes = as.integer(round(mean(average_sedentary_minutes),0)), 
+            mean_very_active_minutes= as.integer(round(mean(average_very_active_minutes),0)),
+            mean_lightly_active_minutes = as.integer(round(mean(average_lighltly_active_minutes),0)),
+            mean_fairly_active_minutes = as.integer(round(mean(average_fairly_active_minutes),0)))
+
+# And we'll create a smaller table to make our first visualization
+
+user_dist <- dad_table %>%
+  select(day_count) %>%
+  count(day_count) %>%
+  arrange(day_count)
+
+# We add our labels to our data frame
+
+user_dist$days = c(as.character(user_dist$day_count))
+
+```
+
+From those last two tables we just created, we designed 3 types of plots to obtain our initial insights, in the following we present the code used to make the plots and the graphical elements themselves:
+
+```{r eval= TRUE, echo=TRUE}
+
+# First visualization showing how many days our users wore the smart fitness device.
+
+viz_1 <- ggplot(data=user_dist, aes(x=day_count, y=n, fill=days))+
+  geom_bar(stat="identity") +
+  theme_light()+
+  labs(title="Days users registered activity and how many of them did",
+       x="Days", y="Users", 
+       caption="Data from: FitBit Fitness Tracker on Kaggle.
+       21 (63%) out of 33 users tracked their data for 31 days")+
+  scale_x_continuous(breaks=seq(3,32,1))
+
+viz_1
+
+```
+
+```{r eval= TRUE, echo=TRUE}
+
+# So most users tracked their data for 31 days
+# Another way to see this is through a pie chart
+
+viz_2 <- ggplot(user_dist, aes(x="",y=n, fill=days))+
+  geom_col(color="black") +
+  coord_polar(theta="y")+
+  theme_void() +
+  labs(title="Days tracked by users and how many users",
+       caption="Data from: FitBit Fitness Tracker on Kaggle.
+       Labels inside the chart correspond to the amount of users.
+       21 (63%) out of 33 users tracked their activity during 31 days")+
+  geom_label(aes(label = n), color="ivory",
+             position = position_stack(vjust = 0.5),
+             show.legend = FALSE,label.size = 0.25) +
+  guides(fill = guide_legend(title = "Days"))+
+  scale_fill_brewer(palette="Paired")
+
+viz_2
+
+```
+
+```{r eval= TRUE, echo=TRUE}
+
+# Let's take a look at how each group of users
+#(those that wore the device often and those that didn't)
+# behaves in terms of their activity
+# To achieve this we'll use our condensed table
+
+# We started by looking at the amount of time our users weren't doing any kind of activity
+
+viz_3a <- ggplot()+
+  geom_point(data= condensed_dad_table, aes(x=day_count, y=mean_sedentary_minutes,color="coral1"),
+             shape = 4, size = 3,
+             stroke = 1, alpha=0.6)+
+  labs(y= "Minutes", x = "Days", caption="Data from: FitBit Fitness Tracker on Kaggle.")+
+  theme_light()+ ggtitle("User workout behavior")+
+  scale_x_continuous(breaks=seq(0,100,10))+
+  guides(color=guide_legend("Behavior"))+
+scale_color_manual(labels = c("Sedentary"),values=c("coral1"))
+margin_viz_3a <- ggMarginal(viz_3a,type="density",margins="x")
+
+margin_viz_3a
+
+```
+
+The previous lines of code were used through all of the analysis with some exceptions, which can be viewed in the R file that contains all of the code used to create the visualizations from which our insights come from.
+
+## Sharing the results
+
+Now onto the visualizations created and our insights.
+
+The next visualization shows the amount of minutes on average per day that lightly active users spend on this kind of physical activity:
+
+![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/lightly_active_minutes_days.jpeg)
+
+This viz shows the amount of minutes on average per day that fairly active users spend on this kind of physical activity:
+
+![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/fairly_active_minutes_days.jpeg)
+
+And this one shows the amount of minutes per day on average that very active users spend on this kind of physical activity:
+
+![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/very_active_minutes_days.jpeg)
+
+Now to make things simpler to see, we can view all of the graphs that relate user workout type and the average amount of minutes per days, that they performed this kind of activity.
+
+![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/active_type_plots_minutes_days.jpeg)
+
+From these visuals we can infer that most of our users prefer to wear the product often and track their activity, this comes from the fact that most of our users tracked their performance during 31 days as show in the first visualizations showed, and in general most users track their activity often (more than 15 days) this is showed in the data distribution curve in the user behavior graphs.
+
+In a similar fashion we took a closer look at the group of users that registered their activity during 31 days, and created a visualization of how average calories and minutes spent on a type of activity related to each other which we can see in the following arrangement of graphs.
+
+![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/calories_minutes_active_type.jpeg) From the previous viz we can gather the next insights:
+
+1.  Most users that wore the device during 31 days are burning between 1750-2250 calories on average per day .
+2.  There are users that spend a lot of minutes being sedentary and anothe group that doesn't, this can be due to the fact that there''re people who workout intensily during short periods and burn as much or more calories than people who live active lives but don't workout as intensily.
+3.  There's not a clear tendency regarding the amount of time on average per day that our users being fairly active.
+4.  There's a large amount of users that are spending about 15 minutes on average per day being very active.
+5.  Most of our users are spending from 200-250 minutes per day on average being lightly active.
+
+We are also interested in finding out what kind or activity our users prefer on average, which we can see from the next viz:
+
+![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/user_workout_preference.jpeg) From the previous visualization we can infer that most users spend on average most of their time performing light activities.
+
+After looking into the type of activities that users who wore the device for 31 days spent most of their time in, we looked at how all of the users that reported their weight log info kept track of their information which the next visualization shows us:
+
+![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/weight_log_info.jpeg)
+
+The previous visualization shows us that these users who kept track of their weight did it by logging their data manually, however not many users out of the 33 chose to do this therefore the difference cannot tell us if there is a preference for this method, it instead informs us that most users preferred to not keep track of this information.
+
+Now in order to obtain our last insight we looked at one of the largest tables in our data set, the minute intensities table that holds the records minute by minute of our users, in this case we didn't just look at users with the same amount of minutes registered we looked at all of the users in the table.
+
+![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/intensity_minutes.jpeg)
+
+From this last visualization we can see that our users prefer to perform their activities during the afternoon and this generalizes to every type of activity intensity.
+This fact is shown in the visualization in the interval 1PM-5PM where we can clearly see that our users not only prefer to perform their activities in the afternoon but they also prefer low intensity activities, with more than 10,000 instances registered of this kind of activity.
+Another thing that is worth noting is that when our users perform activities in the morning they do it in the following interval: 9AM-11AM.
+
+## Acting on the insights
+
+Based on our analysis of the data provided which is insufficient to draw meaningful conclusions to act on, we recommend to gather more data regarding our target audience especially women who are the main user that our company's products, this way we can orient our products functions and designs to cater to their needs and preferences.
+
+Now thinking about the work that was performed we can absolutely say that these smart device users would be interested in the products our company has to offer.
+
+Our insights can be used to create advertisement campaigns online through social media or through our products during the periods of time that our users are finishing their activities, this way we could use the insights we have gathered throughout this analysis to sell our Spring water bottle, which we have reason to believe our users would be interested in, since they show an interest in keeping track of their activity and we could make the product even better by adding more functions besides hydration level tracking.
+
+Other functions that our water bottle can have may include a log of the kind of drinks our users have had during the day this can be manually logged by our users, this may useful to our users to notice trends in their consumer habits, and can help them be aware of how much water they are drinking compared to other types of drinks.
+
+We can also use the insights we obtained regarding the kind of activity our users prefer to design our bottles with a more casual design instead of an active one, given the trend to not perform very active types of activities.
+
+The next steps we could take can be making a new survey and looking into different data sets to get a better view of the population of users that our company makes products for, this way our current insights can be validated and help us reinforce or change our understanding of the trends in these smart device users, for now we can start designing the ads and the functions that our water bottle will have, however we need more data to not risk being wrong in a big way by taking our current insights seriously.
+
+There's more data that we could look into or we could create surveys to understand our target population a lot better, this not only would improve our products performance once launched, but it would allow us to focus on our stakeholders interest and give us insights that we could really act on, right now we only have a very surface level understanding of a very broad category of users which is not useful for our real goal because it is simply not representative of the population we are trying to reach.
