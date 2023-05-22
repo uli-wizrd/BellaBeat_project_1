@@ -231,25 +231,25 @@ Now onto the visualizations created and our insights.
 
 The next visualization shows the amount of minutes on average per day that lightly active users spend on this kind of physical activity:
 
-![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/lightly_active_minutes_days.jpeg)
+![](lightly_active_minutes_days.jpeg)
 
 This viz shows the amount of minutes on average per day that fairly active users spend on this kind of physical activity:
 
-![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/fairly_active_minutes_days.jpeg)
+![](fairly_active_minutes_days.jpeg)
 
 And this one shows the amount of minutes per day on average that very active users spend on this kind of physical activity:
 
-![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/very_active_minutes_days.jpeg)
+![](very_active_minutes_days.jpeg)
 
 Now to make things simpler to see, we can view all of the graphs that relate user workout type and the average amount of minutes per days, that they performed this kind of activity.
 
-![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/active_type_plots_minutes_days.jpeg)
+![](active_type_plots_minutes_days.jpeg)
 
 From these visuals we can infer that most of our users prefer to wear the product often and track their activity, this comes from the fact that most of our users tracked their performance during 31 days as show in the first visualizations showed, and in general most users track their activity often (more than 15 days) this is showed in the data distribution curve in the user behavior graphs.
 
 In a similar fashion we took a closer look at the group of users that registered their activity during 31 days, and created a visualization of how average calories and minutes spent on a type of activity related to each other which we can see in the following arrangement of graphs.
 
-![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/calories_minutes_active_type.jpeg) From the previous viz we can gather the next insights:
+![](calories_minutes_active_type.jpeg) From the previous viz we can gather the next insights:
 
 1.  Most users that wore the device during 31 days are burning between 1750-2250 calories on average per day .
 2.  There are users that spend a lot of minutes being sedentary and anothe group that doesn't, this can be due to the fact that there''re people who workout intensily during short periods and burn as much or more calories than people who live active lives but don't workout as intensily.
@@ -259,17 +259,17 @@ In a similar fashion we took a closer look at the group of users that registered
 
 We are also interested in finding out what kind or activity our users prefer on average, which we can see from the next viz:
 
-![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/user_workout_preference.jpeg) From the previous visualization we can infer that most users spend on average most of their time performing light activities.
+![](user_workout_preference.jpeg) From the previous visualization we can infer that most users spend on average most of their time performing light activities.
 
 After looking into the type of activities that users who wore the device for 31 days spent most of their time in, we looked at how all of the users that reported their weight log info kept track of their information which the next visualization shows us:
 
-![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/weight_log_info.jpeg)
+![](weight_log_info.jpeg)
 
 The previous visualization shows us that these users who kept track of their weight did it by logging their data manually, however not many users out of the 33 chose to do this therefore the difference cannot tell us if there is a preference for this method, it instead informs us that most users preferred to not keep track of this information.
 
 Now in order to obtain our last insight we looked at one of the largest tables in our data set, the minute intensities table that holds the records minute by minute of our users, in this case we didn't just look at users with the same amount of minutes registered we looked at all of the users in the table.
 
-![](C:/Users/uli-8/Documents/Programando%20con%20R/Data%20analysis/Project_1_Bellabeat/Visualizations/intensity_minutes.jpeg)
+![](intensity_minutes.jpeg)
 
 From this last visualization we can see that our users prefer to perform their activities during the afternoon and this generalizes to every type of activity intensity.
 This fact is shown in the visualization in the interval 1PM-5PM where we can clearly see that our users not only prefer to perform their activities in the afternoon but they also prefer low intensity activities, with more than 10,000 instances registered of this kind of activity.
